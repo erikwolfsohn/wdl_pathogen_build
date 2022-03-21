@@ -48,7 +48,6 @@ task ncov_ingest {
     # Native run of snakemake
     nextstrain build \
       --native \
-      --no-download \
       --cpus $PROC \
       --memory ~{memory}GiB \
       --exec env \
