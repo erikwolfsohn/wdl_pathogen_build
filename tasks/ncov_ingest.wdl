@@ -50,7 +50,6 @@ task ncov_ingest {
       --native \
       --cpus $PROC \
       --memory ~{memory}GiB \
-      --exec env \
       . \
         snakemake \
           --configfile config/gisaid.yaml \
