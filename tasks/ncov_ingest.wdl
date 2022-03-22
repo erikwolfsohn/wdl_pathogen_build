@@ -34,7 +34,7 @@ task ncov_ingest {
     unzip master.zip
 
     PROC=`nproc` # Max out processors, although not sure if it matters here
-    mem_mb=`$((~{disk_size}-1))000`
+    mem_mb=`echo $((~{disk_size}-1))000`
 
     # Navigate to ncov-ingest directory, and call snakemake
     cd $NCOV_INGEST_DIR
