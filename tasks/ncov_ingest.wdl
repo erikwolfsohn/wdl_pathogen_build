@@ -34,32 +34,35 @@ task ncov_ingest {
     unzip master.zip
 
     PROC=`nproc` # Max out processors, although not sure if it matters here
+    mem_mb=`$((~{disk_size}-1))000`
 
     # Navigate to ncov-ingest directory, and call snakemake
     cd $NCOV_INGEST_DIR
 
     # Needed for the --config flag
-    #declare -a config
-    #config+=(
-    #  fetch_from_database=True
-    #  trigger_rebuild=True
-    #)
+    declare -a config
+    config+=(
+      fetch_from_database=True
+      trigger_rebuild=False
+    )
 
     # Native run of snakemake
     nextstrain build \
       --native \
       --cpus $PROC \
-      --memory ~{memory}GiB \
+      --memory ~{disk_size}GiB \
       --exec env \
       . \
         snakemake \
           --configfile config/gisaid.yaml \
+          --config "${config[@]}" \
           --cores $PROC \
-          --resources mem_mb=47000 \
+          --resources mem_mb=$mem_mb \
           --printshellcmds
 
       # --exec bash
       #   --config "${config[@]}" \
+      # --resources mem_mb=~{disk_size}000 \
 
     # Or maybe simplier? https://github.com/nextstrain/ncov-ingest/blob/master/.github/workflows/rebuild-open.yml#L26
     #./bin/rebuild open       # Make sure these aren't calling aws before using them
