@@ -3,7 +3,7 @@ version 1.0
 # import "tasks/nextstrain.wdl" as nextstrain # <= modular method
 import "tasks/buildfile.wdl" as buildfile
 import "tasks/nextstrain.wdl" as nextstrain
-# import "tasks/ncov_ingest.wdl" as ncov_ingest
+import "tasks/ncov_ingest.wdl" as ncov_ingest
 
 workflow Nextstrain_WRKFLW {
   input {
@@ -24,13 +24,29 @@ workflow Nextstrain_WRKFLW {
     String? s3deploy
     String? AWS_ACCESS_KEY_ID
     String? AWS_SECRET_ACCESS_KEY
-    
+
+    # Optional Keys for ncov_ingest
+    String? GISAID_API_ENDPOINT
+    String? GISAID_USERNAME_AND_PASSWORD
+    String? ncov_ingest_giturl = "https://github.com/nextstrain/ncov-ingest/archive/refs/heads/master.zip"
+    String? ncov_ingest_docker = "nextstrain/ncov-ingest:latest"
+
     # By default, run the ncov workflow (can swap it for zika or something else)
     String pathogen_giturl = "https://github.com/nextstrain/ncov/archive/refs/heads/master.zip"
     String docker_path = "nextstrain/base:latest"
     Int? cpu
     Int? memory       # in GiB
     Int? disk_size
+  }
+
+  if(defined(GISAID_USERNAME_AND_PASSWORD)){
+    call ncov_ingest.ncov_ingest as ncov_ingest {
+      input:
+        GISAID_API_ENDPOINT = GISAID_API_ENDPOINT,
+        GISAID_USERNAME_AND_PASSWORD = GISAID_USERNAME_AND_PASSWORD,
+        giturl=ncov_ingest_giturl,
+        docker_img=ncov_ingest_docker
+    }
   }
 
   if (defined(sequence_fasta)) {
@@ -63,7 +79,8 @@ workflow Nextstrain_WRKFLW {
 
   output {
     #Array[File] json_files = build.json_files
-    File auspice_zip = build.auspice_zip
-    File results_zip = build.results_zip
+    File? ncov_ingest_zip = ncov_ingest.ncov_ingest_zip
+    File? auspice_zip = build.auspice_zip
+    File? results_zip = build.results_zip
   }
 }
