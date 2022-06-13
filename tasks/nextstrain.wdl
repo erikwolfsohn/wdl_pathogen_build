@@ -79,6 +79,7 @@ task nextstrain_build {
   output {
     File auspice_zip = "auspice.zip"  # json files for auspice
     File results_zip = "results.zip"  # for debugging
+    File align_log = "align_usa.txt" # save logfiles
   }
   runtime {
     docker: dockerImage

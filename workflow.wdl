@@ -65,5 +65,6 @@ workflow Nextstrain_WRKFLW {
     #Array[File] json_files = build.json_files
     File auspice_zip = build.auspice_zip
     File results_zip = build.results_zip
+    File align_log = build.align_log
   }
 }
