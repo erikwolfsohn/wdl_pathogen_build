@@ -5,4 +5,4 @@ workflows:
      testParameterFiles:
      - /input_ncov.json
      authors:
-      - name: Nextstrain
+      - name: Nextstrain_CCPHL
